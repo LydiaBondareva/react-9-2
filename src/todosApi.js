@@ -14,7 +14,6 @@ const todosApi = {
 		}).then((resp) => resp.json());
 	},
 	change: function (id, editedValue) {
-		console.log(TODOS_URL + `${id}`);
 		return fetch(TODOS_URL + `${id}`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },

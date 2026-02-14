@@ -1,26 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
-import styles from './TodoControlPanel.module.css';
-import { setIsSorted, setNewTodo, setSearchValue } from '../../actions';
+import { createTodo, setIsSorted, setNewTodo, setSearchValue } from '../../actions';
 import { selectIsSorted, selectNewTodo, selectSearchValue } from '../../selectors';
+import styles from './TodoControlPanel.module.css';
 
-export default function TodoControlPanel({
-	// newTodo,
-	// setNewTodo,
-	createTodo,
-	// searchValue,
-	// sorted,
-	allTodos,
-}) {
+export default function TodoControlPanel() {
 	const newTodo = useSelector(selectNewTodo);
 	const searchValue = useSelector(selectSearchValue);
 	const isSorted = useSelector(selectIsSorted);
+	const dispatch = useDispatch();
 
 	function handleSubmit(event) {
 		event.preventDefault();
-		createTodo();
+		dispatch(createTodo(newTodo));
 	}
-
-	const dispatch = useDispatch();
 
 	return (
 		<>
@@ -47,7 +39,6 @@ export default function TodoControlPanel({
 			<button
 				className={styles.searchBtn}
 				onClick={() => dispatch(setIsSorted(!isSorted))}
-				disabled={allTodos.length < 2}
 			>
 				{isSorted ? 'Отменить сортировку' : 'Сортировать по алфавиту'}
 			</button>

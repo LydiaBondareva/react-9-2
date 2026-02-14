@@ -1,13 +1,4 @@
-const initialAllState = {
-	newTodo: '',
-	newTaskValue: '',
-	error: '',
-	isLoading: false,
-	searchValue: '',
-	isSorted: false,
-};
-
-const initialTodosState = [];
+import { initialAllState, initialTodosState } from './initialState';
 
 export function allStateReducer(state = initialAllState, action) {
 	const { type, payload } = action;

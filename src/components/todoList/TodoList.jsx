@@ -1,21 +1,31 @@
-import { useState, useRef } from 'react';
-import styles from './todoList.module.css';
-import { FiTrash2, FiEdit2 } from 'react-icons/fi';
-import { setNewTaskValue } from '../../actions';
+import { useRef, useState } from 'react';
+import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectNewTaskValue, selectSearchValue } from '../../selectors';
+import { changeTodo, deleteTodo, setNewTaskValue } from '../../actions';
+import {
+	selectIsSorted,
+	selectNewTaskValue,
+	selectSearchValue,
+	selectTodos,
+} from '../../selectors';
+import { getChosenTodos } from '../../utils';
+import styles from './todoList.module.css';
 
-export default function TodoList({ allTodos, changeTodo, deleteTodo }) {
+export default function TodoList() {
 	const changeInpRef = useRef(null);
 	const [idToChange, setIdToChange] = useState('');
 	const newTaskValue = useSelector(selectNewTaskValue);
 	const searchValue = useSelector(selectSearchValue);
+	const todos = useSelector(selectTodos);
+	const isSorted = useSelector(selectIsSorted);
+
+	const chosenTodos = getChosenTodos(todos, searchValue, isSorted);
 
 	const dispatch = useDispatch();
 
 	function handleSubmit(event, id) {
 		event.preventDefault();
-		changeTodo(id);
+		dispatch(changeTodo(id, newTaskValue));
 		setIdToChange('');
 	}
 
@@ -30,13 +40,13 @@ export default function TodoList({ allTodos, changeTodo, deleteTodo }) {
 	}
 
 	function onBlur(id) {
-		changeTodo(id);
+		dispatch(changeTodo(id, newTaskValue));
 		setIdToChange('');
 	}
 
 	return (
 		<ul className={styles.list}>
-			{allTodos.map((todo) => (
+			{chosenTodos.map((todo) => (
 				<li key={todo.id} className={styles['list-item']}>
 					{idToChange !== todo.id ? (
 						<span>{todo.title}</span>
@@ -59,13 +69,16 @@ export default function TodoList({ allTodos, changeTodo, deleteTodo }) {
 						>
 							<FiEdit2 />
 						</button>
-						<button onClick={() => deleteTodo(todo.id)} className={styles.deleteButton}>
+						<button
+							onClick={() => dispatch(deleteTodo(todo.id))}
+							className={styles.deleteButton}
+						>
 							<FiTrash2 />
 						</button>
 					</div>
 				</li>
 			))}
-			{!allTodos.length &&
+			{!chosenTodos.length &&
 				searchValue &&
 				'К сожалению, по данному запросу дел не обнаружено'}
 		</ul>
